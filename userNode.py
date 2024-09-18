@@ -135,6 +135,7 @@ class UserNode(DemoPipeline):
                 cargo_id0 = self.cargo_id[idx][0]
                 self.move_cargo_in_drone(cargo_id0, car_drone_sn, 11, WorkState.MOVE_CAR_GO_TO_DROPOFF)
                 # 删除第一个送出去的货物
+                rospy.loginfo(f"Cargo index [{cargo_id0}] is put on {car_drone_sn}")
                 self.cargo_id[idx].pop(0)
                 car_route = self.car_back_route[idx]
                 # TODO 这个函数需要完善
@@ -152,15 +153,15 @@ class UserNode(DemoPipeline):
             if key == "146.0|186.0|-34.0":
                 self.cargo_id['car1'] = value
             elif key == "564.0|394.0|-16.0":
-                self.cargo_id['car2'] =value
+                self.cargo_id['car5'] =value
             elif key == "508.0|514.0|-22.0":
                 self.cargo_id['car3'] =value
             elif key == '430.0|184.0|-10.0':
                 self.cargo_id['car4'] =value
             elif key == '528.0|172.0|-20.0':
-                self.cargo_id['car5'] =value
-            elif key == '490.0|390.0|-22.0':
                 self.cargo_id['car6'] =value
+            elif key == '490.0|390.0|-22.0':
+                self.cargo_id['car2'] =value
         self.state = WorkState.WAIT_CAR
         while not rospy.is_shutdown():
             self.inspect_user(self.car_physical_status)
