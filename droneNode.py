@@ -50,8 +50,8 @@ class DroneNode(DemoPipeline):
                 if self.des_pos_reached(drone_pos, value, 2.0) and drone_work_state == 1:
                     if drone.bind_cargo_id != 0:
                         # 释放货物
-                        self.release_cargo(drone_sn, 0.5, WorkState.RELEASE_DRONE_RETURN)
-                    self.fly_one_route(drone_sn, self.fly_line[key], 10, 5, WorkState.MOVE_CAR_GO_TO_PICKUP)
+                        self.release_cargo(drone_sn, 1, WorkState.RELEASE_DRONE_RETURN)
+                    self.fly_one_route(drone_sn, self.fly_line[key], 10, 2.0, WorkState.MOVE_CAR_GO_TO_PICKUP)
                     rospy.loginfo(f"---{drone_sn} is preparing for back---")
 
 

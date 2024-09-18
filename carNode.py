@@ -16,6 +16,12 @@ from user_pkg.msg import UserCmdRequest
 6.航线上没有飞机，但自身有飞机，且飞机上有货物，则放飞飞机，然后等待飞机
 """
 
+"""
+TODO
+1.身上有货物的优先起飞 Finished
+2.缩短一些没必要的时间 Finished
+3.小车的调度速度可以更快
+"""
 
 class CarNode(DemoPipeline):
     def __init__(self, node_name='qrcCarNode', show=False):
@@ -23,21 +29,23 @@ class CarNode(DemoPipeline):
 
         """
         car     cargo
-        1(184, 434, -16)  -->  1 (146, 186, -34)    z = -66
-        2(184, 440, -16)  -->  5 (564, 394, -16)    z = -80  直线
-        3(184, 446, -16)  -->  4 (508, 514, -22)    z = -72  直线
-        4(196, 434, -16)  -->  2 (430, 184, -10)    z = -100 直线
-        5(196, 440, -16)  -->  3 (528, 172, -20)    z = -115 直线
-        6(196, 446, -16)  -->  6 (490, 390, -22)    z = -90 直线
+        1(184, 434, -16)  -->  1 (146, 186, -34)    z = -66         d = 250 + 132
+        2(184, 440, -16)  -->  5 (564, 394, -16)    z = -80  直线   d = 382 + 160
+        3(184, 446, -16)  -->  4 (508, 514, -22)    z = -72  直线   d = 331 + 144
+        4(196, 434, -16)  -->  2 (430, 184, -10)    z = -100 直线   d = 342 + 200
+        5(196, 440, -16)  -->  3 (528, 172, -20)    z = -115 直线   d = 426 + 230
+        6(196, 446, -16)  -->  6 (490, 390, -22)    z = -90 直线    d = 299 + 180
+        按道理6 号小车的优先级应该比 5 号小车的优先级高
+        可以让 1 2 4 5 小车送距离最短的货物 3 6 送距离长的 或许又能提高一些时间
         """
 
         self.car_route = {
-            "SIM-MAGV-0001": [Position(182, 434, -16), Position(190, 434, -16), Position(190, 425, 16)], 
-            "SIM-MAGV-0002": [Position(182, 440, -16), Position(190, 440, -16), Position(190, 425, 16)], 
-            "SIM-MAGV-0003": [Position(182, 446, -16), Position(190, 446, -16), Position(190, 425, 16)], 
-            "SIM-MAGV-0004": [Position(196, 434, -16), Position(190, 434, -16), Position(190, 425, 16)],  
-            "SIM-MAGV-0005": [Position(196, 440, -16), Position(190, 440, -16), Position(190, 425, 16)],  
-            "SIM-MAGV-0006": [Position(196, 446, -16), Position(190, 446, -16), Position(190, 425, 16)], 
+            "SIM-MAGV-0001": [Position(184, 434, -16), Position(190, 434, -16), Position(190, 425, -16)], 
+            "SIM-MAGV-0002": [Position(184, 440, -16), Position(190, 440, -16), Position(190, 425, -16)], 
+            "SIM-MAGV-0003": [Position(184, 446, -16), Position(190, 446, -16), Position(190, 425, -16)], 
+            "SIM-MAGV-0004": [Position(196, 434, -16), Position(190, 434, -16), Position(190, 425, -16)],  
+            "SIM-MAGV-0005": [Position(196, 440, -16), Position(190, 440, -16), Position(190, 425, -16)],  
+            "SIM-MAGV-0006": [Position(196, 446, -16), Position(190, 446, -16), Position(190, 425, -16)], 
         }
         # 六辆小车的状态 0：航线上没有飞机； 1：航线上有飞机 
         self.car_state = [0, 0, 0, 0, 0, 0]
@@ -91,8 +99,8 @@ class CarNode(DemoPipeline):
             if car_work_state != 1:
                 self.state = WorkState.STOP_CAR
                 # break
-            # 如果最后一辆车是这个就会变成RUNNING_CAR
-            if car_work_state == 1 and self.des_pos_reached(self.init_pos[car_sn], car_pos, 0.5):
+            # 如果最后一辆车是这个就会变成RUNNING_CAR 扩大范围，问题应该出在这里
+            if car_work_state == 1 and self.des_pos_reached(self.init_pos[car_sn], car_pos, 1.0):
                 car_sum[carId] = 1
             else:
                 car_sum[carId] = 0
@@ -104,6 +112,25 @@ class CarNode(DemoPipeline):
         # 每辆车都处于可运行状态
         
         if self.state == WorkState.RUNNING_CAR:
+            # 优先检查身上有飞机的且有货物的，然后起飞
+            idx = 0
+            for car in cars:
+                car_sn = car.sn
+                car_work_state = car.car_work_state
+                car_pos = car.pos.position
+                car_drone_sn = car.drone_sn
+                carId = int(car_sn[-1]) - 1
+                # 如果都没有则正常执行
+                if self.car_state[carId] == 1 and car_drone_sn != '':
+                    cars.pop(idx)
+                    cars.insert(0, car)
+                    break
+                idx += 1
+            #         self.fly_one_route(car_drone_sn, self.car_drone_route[car_sn], 10, 1.0, None)
+            #         self.car_state[carId] = 2
+            #         self.state == WorkState.STOP_CAR
+            
+
             for car in cars:
                 car_sn = car.sn
                 car_work_state = car.car_work_state
@@ -119,8 +146,8 @@ class CarNode(DemoPipeline):
                     break
 
                 elif self.car_state[carId] == 1 and car_drone_sn != '':
-                    # 起飞无人机
-                    self.fly_one_route(car_drone_sn, self.car_drone_route[car_sn], 10, 10, None)
+                    # 起飞无人机 缩短为1秒
+                    self.fly_one_route(car_drone_sn, self.car_drone_route[car_sn], 10, 3.0, None)
                     self.car_state[carId] = 2
                     self.state == WorkState.STOP_CAR
                     break
@@ -135,7 +162,26 @@ class CarNode(DemoPipeline):
 
 
                 
-        
+    def sort_car_msg(self, cars):
+        # 直接使用填充的方式进行排序
+        process_cars = [None, None, None, None, None, None]
+        for car in cars:
+            car_sn = car.sn
+            carId = int(car_sn[-1])
+            if carId == 1 : # 1号小车
+                process_cars[0] = car
+            elif carId == 4: #
+                process_cars[2] = car
+            elif carId == 2:
+                process_cars[1] = car
+            elif carId == 5:
+                process_cars[4] = car
+            elif carId == 3:
+                process_cars[3] = car
+            elif carId == 6:
+                process_cars[5] = car
+        return process_cars
+            
 
 
 
@@ -144,7 +190,11 @@ class CarNode(DemoPipeline):
         self.sys_init()
         self.state = WorkState.RUNNING_CAR
         while not rospy.is_shutdown():
-            self.inspect_car(self.car_physical_status)
+            # 需要增加一个车辆优先级 [1, 4], [2, 5], [3, 6]
+            # 设置优先顺序
+            car_msgs = self.sort_car_msg(self.car_physical_status)
+            self.inspect_car(car_msgs)
+            # self.inspect_car(self.car_physical_status)
             rospy.sleep(0.04)
 
 
