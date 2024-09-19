@@ -34,13 +34,21 @@ class UserNode(DemoPipeline):
         
         
         self.car_back_route = {
-            "car1": [Position(190, 425, -16), Position(190, 434, -16), Position(184, 434, -16)],
+            "car1": [Position(190, 425, -16), Position(184, 434, -16)],
             "car2": [Position(190, 425, -16), Position(190, 440, -16), Position(184, 440, -16)],
             "car3": [Position(190, 425, -16), Position(190, 446, -16), Position(184, 446, -16)],
-            "car4": [Position(190, 425, -16), Position(190, 434, -16), Position(196, 434, -16)],
+            "car4": [Position(190, 425, -16), Position(196, 434, -16)],
             "car5": [Position(190, 425, -16), Position(190, 440, -16), Position(196, 440, -16)],
             "car6": [Position(190, 425, -16), Position(190, 446, -16), Position(196, 446, -16)],
         }
+        # self.car_back_route = {
+        #     "car1": [Position(190, 425, -16), Position(190, 434, -16), Position(184, 434, -16)],
+        #     "car2": [Position(190, 425, -16), Position(190, 440, -16), Position(184, 440, -16)],
+        #     "car3": [Position(190, 425, -16), Position(190, 446, -16), Position(184, 446, -16)],
+        #     "car4": [Position(190, 425, -16), Position(190, 434, -16), Position(196, 434, -16)],
+        #     "car5": [Position(190, 425, -16), Position(190, 440, -16), Position(196, 440, -16)],
+        #     "car6": [Position(190, 425, -16), Position(190, 446, -16), Position(196, 446, -16)],
+        # }
         self.car_sn_idx = {
             "SIM-MAGV-0001": 'car1', 
             "SIM-MAGV-0002": 'car2', 
@@ -96,7 +104,11 @@ class UserNode(DemoPipeline):
         msg.task_guid = self.task_guid
         msg.type = UserCmdRequest.USER_CMD_CAR_EXEC_ROUTE
         msg.car_route_info.carSn = car_sn
-        if int(car_sn[-1]) <=3:
+        if int(car_sn[-1]) == 1:
+            msg.car_route_info.yaw = 2.3
+        elif int(car_sn[-1]) == 4:
+            msg.car_route_info.yaw = 0.7
+        elif int(car_sn[-1]) <=3 and int(car_sn[-1]) > 1:
             msg.car_route_info.yaw = 3
         else:
             msg.car_route_info.yaw = 0
@@ -135,6 +147,7 @@ class UserNode(DemoPipeline):
                 cargo_id0 = self.cargo_id[idx][0]
                 self.move_cargo_in_drone(cargo_id0, car_drone_sn, 11, WorkState.MOVE_CAR_GO_TO_DROPOFF)
                 # 删除第一个送出去的货物
+                rospy.loginfo(f"Cargo index [{cargo_id0}] is put on {car_drone_sn}")
                 self.cargo_id[idx].pop(0)
                 car_route = self.car_back_route[idx]
                 # TODO 这个函数需要完善
@@ -152,15 +165,15 @@ class UserNode(DemoPipeline):
             if key == "146.0|186.0|-34.0":
                 self.cargo_id['car1'] = value
             elif key == "564.0|394.0|-16.0":
-                self.cargo_id['car2'] =value
+                self.cargo_id['car5'] =value
             elif key == "508.0|514.0|-22.0":
                 self.cargo_id['car3'] =value
             elif key == '430.0|184.0|-10.0':
                 self.cargo_id['car4'] =value
             elif key == '528.0|172.0|-20.0':
-                self.cargo_id['car5'] =value
-            elif key == '490.0|390.0|-22.0':
                 self.cargo_id['car6'] =value
+            elif key == '490.0|390.0|-22.0':
+                self.cargo_id['car2'] =value
         self.state = WorkState.WAIT_CAR
         while not rospy.is_shutdown():
             self.inspect_user(self.car_physical_status)
