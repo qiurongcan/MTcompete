@@ -57,6 +57,9 @@
 2. v5是改进后的版本 best score is 15 20min； 1 hour is 45 score 这个版本是最保守的版本
 3. 增加一个激进的版本
 4. v6版本是调整了以下小车的送货顺序 score:15 in 20 min Stable Version
+5. v7版本 稳定在16分
+6. v8版本 score is 17
+7. v9版本 is coming soon ！！ 有望将分数提升得更高！！
 
 ## TODO
 1. 增加一个调整 与小车匹配送货点的版本；同时调整小车到上货点的优先级 (已完成) 需要在car、user、drone三个节点都做调整
