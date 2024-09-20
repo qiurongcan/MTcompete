@@ -59,7 +59,8 @@
 4. v6版本是调整了以下小车的送货顺序 score:15 in 20 min Stable Version
 5. v7版本 稳定在16分
 6. v8版本 score is 17
-7. v9版本 is coming soon ！！ 有望将分数提升得更高！！
+7. v9版本 is coming soon ！！ 有望将分数提升得更高！！ v9更新，貌似分数没有提升！！
+8. v10版本或许速度更快
 
 ## TODO
 1. 增加一个调整 与小车匹配送货点的版本；同时调整小车到上货点的优先级 (已完成) 需要在car、user、drone三个节点都做调整
