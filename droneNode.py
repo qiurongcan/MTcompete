@@ -25,21 +25,22 @@ class DroneNode(DemoPipeline):
         # 存储六个目的地的航线
         self.fly_line ={
             'pos1': [Position(148, 184, -66), Position(130, 298, -66), Position(184, 434, -66), Position(184, 434, -21)],
-            'pos5': [Position(564, 394, -80), Position(184, 440, -80),Position(184, 440, -21)],
+            'pos5': [Position(564, 394, -80), Position(196, 440, -80),Position(196, 440, -21)],
             'pos4': [Position(508, 514 ,-72), Position(184, 446, -72), Position(184, 446, -21)],
             'pos2': [Position(430, 184, -100), Position(196, 434, -100), Position(196, 434, -21)],
-            'pos3': [Position(528, 172, -115), Position(196, 440, -115), Position(196, 440, -21)],
-            'pos6': [Position(490, 390, -90), Position(196, 446, -90), Position(196, 446, -21)],
+            'pos3': [Position(528, 172, -115), Position(196, 446, -115), Position(196, 446, -21)],
+            'pos6': [Position(490, 390, -90), Position(184, 440, -90), Position(184, 440, -21)],
         }
 
         # self.car_drone_route = {
-        #     "SIM-MAGV-0001": [Position(184, 434, -66), Position(130, 298, -66), Position(148, 184, -66), Position(146, 186, -39)], 
-        #     "SIM-MAGV-0002": [Position(184, 440, -80), Position(564, 394, -80), Position(564, 394, -21)], 
-        #     "SIM-MAGV-0003": [Position(184, 446, -72), Position(508, 514 ,-72), Position(508, 514 ,-27)], 
-        #     "SIM-MAGV-0004": [Position(196, 434, -100), Position(430, 184, -100), Position(430, 184, -15)],  
-        #     "SIM-MAGV-0005": [Position(196, 440, -115), Position(528, 172, -115), Position(528, 172, -25)],  
-        #     "SIM-MAGV-0006": [Position(196, 446, -90), Position(490, 390, -90), Position(490, 390, -27)], 
+        # 1#"SIM-MAGV-0001": [Position(184, 434, -66), Position(130, 298, -66), Position(148, 184, -66), Position(146, 186, -39)], 
+        # 6#"SIM-MAGV-0002": [Position(184, 440, -90), Position(490, 390, -90), Position(490, 390, -27)],
+        # 4#"SIM-MAGV-0003": [Position(184, 446, -72), Position(508, 514 ,-72), Position(508, 514 ,-27)], 
+        # 2#"SIM-MAGV-0004": [Position(196, 434, -100), Position(430, 184, -100), Position(430, 184, -15)],  
+        # 5#"SIM-MAGV-0005": [Position(196, 440, -80), Position(564, 394, -80), Position(564, 394, -21)],
+        # 3#"SIM-MAGV-0006": [Position(196, 446, -115), Position(528, 172, -115), Position(528, 172, -25)],  
         # }
+
 
     def inspect_drone(self, drones):
         for drone in drones:
@@ -48,10 +49,11 @@ class DroneNode(DemoPipeline):
             drone_sn = drone.sn
             for key, value in self.target_pos.items():
                 if self.des_pos_reached(drone_pos, value, 2.0) and drone_work_state == 1:
-                    if drone.bind_cargo_id != 0:
+                    # if drone.bind_cargo_id != 0:
                         # 释放货物
-                        self.release_cargo(drone_sn, 0.5, WorkState.RELEASE_DRONE_RETURN)
-                    self.fly_one_route(drone_sn, self.fly_line[key], 10, 5, WorkState.MOVE_CAR_GO_TO_PICKUP)
+                    rospy.loginfo(f"--{drone_sn}'s cargo_id is {drone.bind_cargo_id}--")
+                    self.release_cargo(drone_sn, 1, WorkState.RELEASE_DRONE_RETURN)
+                    self.fly_one_route(drone_sn, self.fly_line[key], 10, 2.0, WorkState.MOVE_CAR_GO_TO_PICKUP)
                     rospy.loginfo(f"---{drone_sn} is preparing for back---")
 
 
