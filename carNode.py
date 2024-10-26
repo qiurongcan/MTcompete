@@ -103,9 +103,9 @@ class CarNode(DemoPipeline):
         self.state_msg = Int32MultiArray()
         # 10.25需要修改航线
         self.car_drone_route = {
-            "SIM-MAGV-0001": [Position(187, 431, -70), Position(430, 184, -70), Position(430, 184, -14)],
-            "SIM-MAGV-0002": [Position(181, 431, -80), Position(490, 390, -80), Position(490, 390, -26)], #
-            "SIM-MAGV-0003": [Position(181, 431, -75), Position(508, 514 ,-75), Position(508, 514 ,-26)], ###
+            "SIM-MAGV-0001": [Position(187, 431, -73), Position(430, 184, -73), Position(430, 184, -14)],
+            "SIM-MAGV-0002": [Position(181, 431, -79), Position(490, 390, -79), Position(490, 390, -26)], #
+            "SIM-MAGV-0003": [Position(181, 431, -93), Position(508, 514 ,-93), Position(508, 514 ,-26)], ###
             "SIM-MAGV-0004": [Position(193, 431, -66), Position(130, 298, -66), Position(148, 184, -66), Position(146, 186, -38)], 
             "SIM-MAGV-0005": [Position(199, 431, -85), Position(564, 394, -85), Position(564, 394, -20)], ### 
             "SIM-MAGV-0006": [Position(199, 431, -115), Position(528, 172, -115), Position(528, 172, -24)],
@@ -133,6 +133,8 @@ class CarNode(DemoPipeline):
         }
 
         self.load_pos = Position(190, 425, -16)
+
+        self.flag_4_init = 1
 
 
     def flag_cb(self, msg):
@@ -232,6 +234,11 @@ class CarNode(DemoPipeline):
 
                 # 初始状态的小车
                 if self.car_state[carId] == 0 and self.des_pos_reached(car_pos, self.init_pos[car_sn], 2.0):
+                    # 4 号小车第一次跳过
+                    if carId == 3 and self.flag_4_init:
+                        if self.car_state[4] == 1:
+                            self.flag_4_init = 0
+                        continue
                     # 去上货点，同时接货 
                     self.move_car_with_route(car_sn, self.car_route[car_sn], 2.0)
                     self.car_state[carId] = 1

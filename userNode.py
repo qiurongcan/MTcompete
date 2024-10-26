@@ -116,10 +116,10 @@ class UserNode(DemoPipeline):
             # 小车到达目的地且为准备状态
             if self.des_pos_reached(self.load_pos, car_pos, 0.5) and car_work_state == 1:
 
-                if carId == 3 and self.stop_time_flag:
-                    # 设置第四辆小车延迟的时间
-                    rospy.sleep(15)
-                    self.stop_time_flag = 0
+                # if carId == 3 and self.stop_time_flag:
+                #     # 设置第四辆小车延迟的时间
+                #     rospy.sleep(15)
+                #     self.stop_time_flag = 0
                 
                 # 来上货点的车是空车
                 if car_drone_sn == '':

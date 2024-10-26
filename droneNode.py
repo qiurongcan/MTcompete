@@ -28,11 +28,11 @@ class DroneNode(DemoPipeline):
         # 存储六个目的地的航线
         self.fly_line ={
             'pos1': [Position(148, 184, -66), Position(130, 298, -66), Position(193, 431, -80), Position(193, 431, -20)], #5
-            'pos5': [Position(564, 394, -85), Position(194, 438, -85), Position(194, 438, -20)],# 4
-            'pos4': [Position(508, 514 ,-75), Position(181, 440, -66), Position(181, 440, -20)], # 3
-            'pos2': [Position(430, 184, -70), Position(187, 431, -70), Position(187, 431, -20)], # 1
+            'pos5': [Position(564, 394, -85), Position(194, 438, -85), Position(194, 438, -20)], ####
+            'pos4': [Position(508, 514 ,-93), Position(181, 440, -93), Position(181, 440, -20)], ####
+            'pos2': [Position(430, 184, -73), Position(187, 431, -73), Position(187, 431, -20)], # 1
             'pos3': [Position(528, 172, -115), Position(199, 440, -115), Position(199, 440, -20)], #6 
-            'pos6': [Position(490, 390, -80), Position(186, 438, -75), Position(186, 438, -20)], # 2
+            'pos6': [Position(490, 390, -79), Position(186, 438, -79), Position(186, 438, -20)], # 2
         }
 
 
