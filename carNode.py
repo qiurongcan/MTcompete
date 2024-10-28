@@ -104,10 +104,10 @@ class CarNode(DemoPipeline):
         # 10.25需要修改航线
         self.car_drone_route = {
             "SIM-MAGV-0001": [Position(187, 431, -73), Position(430, 184, -73), Position(430, 184, -14)],
-            "SIM-MAGV-0002": [Position(181, 431, -79), Position(490, 390, -79), Position(490, 390, -26)], #
+            "SIM-MAGV-0002": [Position(181, 431, -88), Position(490, 390, -88), Position(490, 390, -26)], #
             "SIM-MAGV-0003": [Position(181, 431, -93), Position(508, 514 ,-93), Position(508, 514 ,-26)], ###
             "SIM-MAGV-0004": [Position(193, 431, -66), Position(130, 298, -66), Position(148, 184, -66), Position(146, 186, -38)], 
-            "SIM-MAGV-0005": [Position(199, 431, -85), Position(564, 394, -85), Position(564, 394, -20)], ### 
+            "SIM-MAGV-0005": [Position(199, 431, -80), Position(564, 394, -80), Position(564, 394, -20)], ### 
             "SIM-MAGV-0006": [Position(199, 431, -115), Position(528, 172, -115), Position(528, 172, -24)],
         }
 
@@ -212,7 +212,21 @@ class CarNode(DemoPipeline):
                 car_drone_sn = car.drone_sn
                 carId = int(car_sn[-1]) - 1
 
-                if self.car_state[carId] == 1 and car_drone_sn != '':
+                # 初始状态的小车
+                if self.car_state[carId] == 0 and self.des_pos_reached(car_pos, self.init_pos[car_sn], 2.0):
+                    # 4 号小车第一次跳过
+                    if carId == 3 and self.flag_4_init:
+                        if self.car_state[4] == 1:
+                            self.flag_4_init = 0
+                        continue
+                    # 去上货点，同时接货 
+                    self.move_car_with_route(car_sn, self.car_route[car_sn], 2.0)
+                    self.car_state[carId] = 1
+                    self.state == WorkState.STOP_CAR
+                    self.flag = 0
+                    break
+
+                elif self.car_state[carId] == 1 and car_drone_sn != '':
                     # 起飞无人机 缩短为1秒
                     self.fly_one_route(car_drone_sn, self.car_drone_route[car_sn], 10, 3.0, None)
                     # 对于3车和5车而言，飞机起飞后需要挪动小车
@@ -230,21 +244,7 @@ class CarNode(DemoPipeline):
                         # print("--------------------")
                     self.car_state[carId] = 2
                     self.state == WorkState.STOP_CAR
-                    break
-
-                # 初始状态的小车
-                if self.car_state[carId] == 0 and self.des_pos_reached(car_pos, self.init_pos[car_sn], 2.0):
-                    # 4 号小车第一次跳过
-                    if carId == 3 and self.flag_4_init:
-                        if self.car_state[4] == 1:
-                            self.flag_4_init = 0
-                        continue
-                    # 去上货点，同时接货 
-                    self.move_car_with_route(car_sn, self.car_route[car_sn], 2.0)
-                    self.car_state[carId] = 1
-                    self.state == WorkState.STOP_CAR
-                    self.flag = 0
-                    break
+                    break  
                 
                 elif self.car_state[carId] == 2 and car_drone_sn != '' and self.des_pos_reached(car_pos, self.init_pos[car_sn], 2.0):
                     # 返回上货点
@@ -274,12 +274,12 @@ class CarNode(DemoPipeline):
                             self.fly_one_route(car_drone_sn, self.car_drone_route[car_sn], 10, 2.0, None)
                             if carId == 1:
                                 self.move_car_with_route("SIM-MAGV-0002", self.two_fly_car_route, 2.0)
-                                # print("----------------")
+                                
                             elif carId == 2:
                                 self.move_car_with_route("SIM-MAGV-0003", self.three_fly_car_route, 2.0)
                             elif carId == 4:
                                 self.move_car_with_route("SIM-MAGV-0005", self.five_fly_car_route, 2.0)
-                                # print("================")
+                                
                             elif carId == 5:
                                 self.move_car_with_route("SIM-MAGV-0006", self.six_fly_car_route, 2.0)
                             self.car_state[carId] = 2
