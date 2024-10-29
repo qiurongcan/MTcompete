@@ -115,12 +115,7 @@ class UserNode(DemoPipeline):
             carId = int(car_sn[-1]) - 1
             # 小车到达目的地且为准备状态
             if self.des_pos_reached(self.load_pos, car_pos, 0.5) and car_work_state == 1:
-
-                # if carId == 3 and self.stop_time_flag:
-                #     # 设置第四辆小车延迟的时间
-                #     rospy.sleep(15)
-                #     self.stop_time_flag = 0
-                
+              
                 # 来上货点的车是空车
                 if car_drone_sn == '':
                     # 放置飞机
@@ -179,21 +174,14 @@ class UserNode(DemoPipeline):
                     
                     # self.cargo_id[idx].pop(0)
                     car_route = self.car_back_route[idx]
-                    # TODO 这个函数需要完善
-                    self.move_car_with_route(car_sn, car_route, 2.0)
+                    
+                    self.move_car_with_route(car_sn, car_route, 2.5)
                 else:
                     rospy.loginfo("---[Warning] No Cargo can be put-----")
                     car_route = self.car_back_route[idx]
-                    # TODO 这个函数需要完善
-                    self.move_car_with_route(car_sn, car_route, 2.0)
-                # 发布一个消息，小车已经离开了
-                # if carId == 2 or carId ==4: # 3和5号小车离开时发2
-                #     self.flag_pub.publish(2)
-                # if carId == 2: # 3和5号小车离开时发2
-                #     self.flag_pub.publish(2)
-                # else: # 1、2、4小车离开时发1
-                #     if carId == 4:
-                #         rospy.sleep(4.0)
+                    
+                    self.move_car_with_route(car_sn, car_route, 2.5)
+                
                 self.flag_pub.publish(self.flag)
 
 
