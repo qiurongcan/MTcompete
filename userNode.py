@@ -174,13 +174,18 @@ class UserNode(DemoPipeline):
                     
                     # self.cargo_id[idx].pop(0)
                     car_route = self.car_back_route[idx]
-                    
-                    self.move_car_with_route(car_sn, car_route, 2.5)
+                    if carId == 0 or carId == 3:
+                        self.move_car_with_route(car_sn, car_route, 4.0)
+                    else:
+                        self.move_car_with_route(car_sn, car_route, 2.5)
                 else:
                     rospy.loginfo("---[Warning] No Cargo can be put-----")
                     car_route = self.car_back_route[idx]
                     
-                    self.move_car_with_route(car_sn, car_route, 2.5)
+                    if carId == 0 or carId == 3:
+                        self.move_car_with_route(car_sn, car_route, 4.0)
+                    else:
+                        self.move_car_with_route(car_sn, car_route, 2.5)
                 
                 self.flag_pub.publish(self.flag)
 
