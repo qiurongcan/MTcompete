@@ -27,12 +27,12 @@ class DroneNode(DemoPipeline):
         # 【决赛】修改小车的返回路线
         # 存储六个目的地的航线
         self.fly_line ={
-            'pos1': [Position(148, 184, -66), Position(130, 298, -66), Position(193, 431, -80), Position(193, 431, -20)], #5
-            'pos5': [Position(564, 394, -85), Position(194, 438, -85), Position(194, 438, -20)], ####
-            'pos4': [Position(508, 514 ,-93), Position(181, 440, -93), Position(181, 440, -20)], ####
-            'pos2': [Position(430, 184, -73), Position(187, 431, -73), Position(187, 431, -20)], # 1
-            'pos3': [Position(528, 172, -115), Position(199, 440, -115), Position(199, 440, -20)], #6 
-            'pos6': [Position(490, 390, -79), Position(186, 438, -79), Position(186, 438, -20)], # 2
+            'pos1': [Position(148, 184, -66), Position(130, 298, -66), Position(193, 426, -66), Position(193, 431, -20)], 
+            'pos5': [Position(564, 394, -80), Position(194, 438, -80), Position(194, 438, -20)], ####5
+            'pos4': [Position(508, 514 ,-92), Position(181, 446, -92), Position(181, 440, -20)], ####3号路线往外扩展一些
+            'pos2': [Position(434, 187, -73), Position(187, 431, -73), Position(187, 431, -20)], # 1
+            'pos3': [Position(528, 172, -115), Position(387, 284, -115), Position(363, 308, -65), Position(199, 445, -65), Position(199, 440, -20)], #6 
+            'pos6': [Position(490, 390, -86), Position(186, 438, -86), Position(186, 438, -20)], # 2
         }
 
 
