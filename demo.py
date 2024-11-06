@@ -29,19 +29,6 @@ from user_pkg.srv import QueryVoxel, QueryVoxelRequest
 
 
 class WorkState(Enum):
-    # START = 1
-    # TEST_MAP_QUERY = 2
-    # MOVE_CAR_GO_TO_LOADING_POINT = 3
-    # MOVE_DRONE_ON_CAR = 4
-    # MOVE_CARGO_IN_DRONE = 5
-    # MOVE_CAR_TO_LEAVING_POINT = 6
-    # RELEASE_DRONE_OUT = 7
-    # RELEASE_CARGO = 8
-    # RELEASE_DRONE_RETURN = 9
-    # MOVE_CAR_BACK_TO_LOADING_POINT = 10
-    # DRONE_BATTERY_REPLACEMENT = 11
-    # DRONE_RETRIEVE = 12
-    # FINISHED = 13
     START = 1                                       # 开始状态 
     TEST_MAP_QUERY = 2                              # 测试地图体素状态
 
@@ -124,6 +111,18 @@ class DemoPipeline:
         print(response)
         if response.success:
             self.state = WorkState.MOVE_CAR_GO_TO_LOADING_POINT
+
+    def move_car_with_route(self, car_sn, route, time_est):
+        """小车需要设置偏航角yaw"""
+        msg = UserCmdRequest()
+        msg.peer_id = self.peer_id
+        msg.task_guid = self.task_guid
+        msg.type = UserCmdRequest.USER_CMD_CAR_EXEC_ROUTE
+        msg.car_route_info.carSn = car_sn
+        msg.car_route_info.way_point = route
+        self.cmd_pub.publish(msg)
+        rospy.loginfo(f'--{car_sn} is prepare for back --')
+        rospy.sleep(time_est)
 
     # 移动地面车辆的函数
     def move_car_with_start_and_end(
